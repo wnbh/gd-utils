@@ -455,18 +455,14 @@ async function get_info_by_id (fid, use_sa) {
 }
 
 async function user_choose () {
-  const answer = await prompts({
-    type: 'select',
+  const response = await prompts({
+    type: 'number',
     name: 'value',
-    message: '检测到上次的复制记录，是否继续？',
-    choices: [
-      { title: 'Continue', description: '从上次中断的地方继续', value: 'continue' },
-      { title: 'Restart', description: '无视已存在的记录，重新复制', value: 'restart' },
-      { title: 'Exit', description: '直接退出', value: 'exit' }
-    ],
-    initial: 0
+    message: `检测到上次的复制记录，是否继续？（1/2/3）：\n 1.继续\n 2.重来\n 3.退出\n`,
+    validate: value => [1, 2, 3].includes(value) ? true : `必须输入 1/2/3`
   })
-  return answer.value
+  const choices = ['', 'continue', 'restart', 'exit']
+  return choices[response.value]
 }
 
 async function copy ({ source, target, name, min_size, update, not_teamdrive, service_account, dncnr, is_server }) {
@@ -777,17 +773,14 @@ function find_dupe (arr) {
 }
 
 async function confirm_dedupe ({ file_number, folder_number }) {
-  const answer = await prompts({
-    type: 'select',
+  const response = await prompts({
+    type: 'number',
     name: 'value',
-    message: `检测到同位置下重复文件${file_number}个，重复空目录${folder_number}个，是否删除？`,
-    choices: [
-      { title: 'Yes', description: '确认删除', value: 'yes' },
-      { title: 'No', description: '先不删除', value: 'no' }
-    ],
-    initial: 0
+    message: `检测到同位置下重复文件${file_number}个，重复空目录${folder_number}个，是否删除？\n 1.确认删除\n 2.暂不删除\n`,
+    validate: value => [1, 2].includes(value) ? true : `必须输入 1/2`
   })
-  return answer.value
+  const choices = ['', 'yes', 'no']
+  return choices[response.value]
 }
 
 // 需要sa是源文件夹所在盘的manager
@@ -881,7 +874,7 @@ function handle_error (err) {
 }
 
 function print_progress (msg) {
-  if (process.stdout.cursorTo) {
+  if (false) {
     process.stdout.cursorTo(0)
     process.stdout.write(msg + ' ')
   } else {
